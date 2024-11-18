@@ -1,0 +1,70 @@
+version: '3.8'
+
+name: hypolia
+networks:
+  hypolia:
+    driver: bridge
+    name: hypolia
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hypolia_api
+    volumes:
+      - ./init-keycloak.sql:/docker-entrypoint-initdb.d/init-keycloak.sql
+    networks:
+      - hypolia
+
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: POSTGRES
+      DB_ADDR: "postgres"  # Remplacez par l'adresse IP ou le nom du serveur de votre instance PostgreSQL
+      DB_PORT: "5432"  # Port par défaut de PostgreSQL
+      DB_DATABASE: "keycloak"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+    command:
+      - start-dev
+    volumes:
+      - keycloak_data:/path/to/keycloak/data
+    networks:
+      - hypolia
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+    networks:
+      - hypolia
+    environment:
+        TZ: "UTC"
+        PORT: "3333"
+        HOST: "localhost"
+        LOG_LEVEL: "info"
+        APP_KEY: "1iXqa_bViBWZcBPGiclMwnS00CeH2zV"
+        NODE_ENV: "development"
+        DB_HOST: "postgres"
+        DB_PORT: "5432"
+        DB_USER: "ostgres"
+        DB_PASSWORD: "postgres"
+        DB_DATABASE: "hypolia_api"
+
+        KEYCLOAK_URL: "http://keycloak:8080"
+        KEYCLOAK_REALM: "hypolia"
+        KEYCLOAK_CLIENT_ID: "api"
+        KEYCLOAK_CLIENT_SECRET: "A4B6h0ofQNgqoqZ0oPJRjGnCriTFdR68"
+
+
+volumes:
+  keycloak_data: {}
