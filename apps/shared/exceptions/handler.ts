@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { HttpContext, ExceptionHandler, errors } from '@adonisjs/core/http'
 import { errors as authErrors } from '@adonisjs/auth'
 import { errors as lucidErrors } from '@adonisjs/lucid'
 import { errors as bouncerErrors } from '@adonisjs/bouncer'
@@ -16,7 +16,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    console.log(error)
+    if (error instanceof errors.E_ROUTE_NOT_FOUND) {
+      return ctx.response.status(404).send({
+        message: error.message,
+        status: error.status,
+        code: error.code,
+      })
+    }
     if (error instanceof bouncerErrors.E_AUTHORIZATION_FAILURE) {
       return ctx.response.status(error.status).send({
         message: error.response.message,
