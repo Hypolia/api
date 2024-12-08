@@ -16,8 +16,8 @@ COPY ./pnpm-lock.yaml .
 COPY . .
 
 FROM dependencies AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm run build
+RUN pnpm install
+RUN pnpm run build
 
 FROM base AS production
 ENV NODE_ENV=production
