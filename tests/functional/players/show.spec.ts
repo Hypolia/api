@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import { UserFactory } from '#database/factories/user_factory'
-import { PlayerFactoryWithUser } from '#database/factories/player_factory'
+import { PlayerFactory, PlayerFactoryWithUser } from '#database/factories/player_factory'
 
 test.group('Players show', () => {
   test('should return 401 if the user was not connected', async ({ assert, client }) => {
@@ -21,12 +21,24 @@ test.group('Players show', () => {
     response.assertStatus(200)
     assert.properties(response.body(), ['id', 'userId', 'coins', 'level', 'playerUuid'])
     expect(response.body()).toEqual(player.toJSON())
+  }).tags(['player'])
+
+  test('should return 403 if the user was connected but not authorized', async ({ assert, client }) => {
+    const user = await UserFactory.make()
+    const player = await PlayerFactory.make()
+
+    const response = await client.get(`/v1/players/${player.id}`).loginAs(user, [])
+
+    response.assertStatus(403)
+    assert.properties(response.body(), ['code', 'status', 'message'])
+    assert.equal(response.body().code, 'E_AUTHORIZATION_FAILURE')
+    assert.equal(response.body().status, 403)
   })
 
   test('should return 404 if the player was not found', async ({ assert, client }) => {
     const user = await UserFactory.make()
 
-    const response = await client.get(`/v1/players/1`).loginAs(user, [])
+    const response = await client.get(`/v1/players/1`).loginAs(user, ['view-player'])
 
     assert.properties(response.body(), ['code', 'status', 'message'])
     assert.equal(response.body().code, 'E_ROW_NOT_FOUND')
