@@ -16,7 +16,8 @@ export default class PlayersController {
     return this.playerService.findAll(data)
   }
 
-  async show({ params }: HttpContext) {
+  async show({ params, bouncer }: HttpContext) {
+    await bouncer.with(PlayerPolicy).authorize('view', params.id)
     return this.playerService.findById(params.id)
   }
 
