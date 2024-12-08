@@ -9,6 +9,14 @@ export default class PlayerPolicy extends BasePolicy {
     super()
   }
 
+  async view(payload: JWTPayload) {
+    if (this.roleService.hasRole(payload, 'view-player')) {
+      return AuthorizationResponse.allow()
+    }
+
+    return AuthorizationResponse.deny('You are not allowed to view a player')
+  }
+
   async create(payload: JWTPayload) {
     if (this.roleService.hasRole(payload, 'create-player')) {
       return AuthorizationResponse.allow()
