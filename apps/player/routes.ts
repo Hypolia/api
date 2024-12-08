@@ -6,6 +6,7 @@ router
   .group(() => {
     router
       .group(() => {
+        router.get('/', [PlayersController, 'index'])
         router.get('/:id', [PlayersController, 'show'])
         router.post('/', [PlayersController, 'store'])
       })
