@@ -10,6 +10,18 @@ export default class PlayerService {
     return Player.query().where('id', id).firstOrFail()
   }
 
+  async findByUserId(userId: string) {
+    return Player.query().where('user_id', userId).firstOrFail()
+  }
+
+  async findByOidcId(oidcId: string) {
+    return Player.query()
+      .whereHas('user', (query) => {
+        query.where('oidc_id', oidcId)
+      })
+      .firstOrFail()
+  }
+
   async create(payload: CreatePlayerSchema) {
     return Player.create({
       ...payload,
