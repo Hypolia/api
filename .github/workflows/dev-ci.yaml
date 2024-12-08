@@ -1,7 +1,7 @@
 on:
   workflow_call:
     secrets:
-      GCP_TOKEN:
+      GCP_CREDENTIALS:
         required: true
 
   push:
@@ -9,6 +9,10 @@ on:
       - main
     paths-ignore:
       - '.github/**'
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   extract-version:
@@ -22,6 +26,37 @@ jobs:
         run: echo "VERSION=$(echo git rev-parse --short ${{ github.sha }}) >> $GITHUB_OUTPUT"
       - name: Confirm git commit SHA output
         run: echo ${{ steps.extract-version.outputs.VERSION }}
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: hypolia_api_test
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.14.0'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run tests
+        run: pnpm run test
   build:
     needs: [ extract-version ]
     uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
