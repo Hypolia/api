@@ -58,13 +58,13 @@ jobs:
       - name: Run tests
         run: pnpm run test
   build:
-    needs: [ extract-version ]
+    needs: [extract-version, test]
     uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
     with:
       registry: europe-west1-docker.pkg.dev/nathael-dev
       ref: main
       repository: hypolia/api
-      tag: ${{ needs.extract.outputs.version }}
+      tag: ${{ needs.extract-version.outputs.version }}
       worker_pool: projects/nathael-dev/locations/europe-west1/workerPools/cicd-pool
     secrets:
       PAT: ${{ secrets.GITHUB_TOKEN }}
