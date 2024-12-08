@@ -58,6 +58,7 @@ jobs:
       - name: Run tests
         run: pnpm run test
   build:
+    if: ${{ !github.event.act }}
     needs: [extract-version, test]
     uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
     with:
