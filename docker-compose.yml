@@ -7,6 +7,20 @@ networks:
     name: hypolia
 
 services:
+  kanri:
+    image: ghcr.io/hypolia/kanri:0.1.3-rc2
+    ports:
+      - "4444:4444"
+    environment:
+      - PORT=4444
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/hypolia_kanri
+      - DATABASE_HOST=postgres:5432/hypolia_kanri
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - NATS_URL=nats://nats:4222
+      - MESSAGING_TYPE=nats
+    networks:
+      - hypolia
   postgres:
     image: postgres:latest
     ports:
@@ -19,6 +33,22 @@ services:
       - ./init-keycloak.sql:/docker-entrypoint-initdb.d/init-keycloak.sql
     networks:
       - hypolia
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+    networks:
+      - hypolia
+  nats-dashboard:
+    image: mdawar/nats-dashboard
+    environment:
+      REVERSE_PROXY_UPSTREAM: 'nats:8222'
+    ports:
+      - target: 80
+        published: 8000
+        protocol: tcp
 
   keycloak:
     image: quay.io/keycloak/keycloak
@@ -39,32 +69,5 @@ services:
       - keycloak_data:/path/to/keycloak/data
     networks:
       - hypolia
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3333:3333"
-    networks:
-      - hypolia
-    environment:
-        TZ: "UTC"
-        PORT: "3333"
-        HOST: "localhost"
-        LOG_LEVEL: "info"
-        APP_KEY: "1iXqa_bViBWZcBPGiclMwnS00CeH2zV"
-        NODE_ENV: "development"
-        DB_HOST: "postgres"
-        DB_PORT: "5432"
-        DB_USER: "ostgres"
-        DB_PASSWORD: "postgres"
-        DB_DATABASE: "hypolia_api"
-
-        KEYCLOAK_URL: "http://keycloak:8080"
-        KEYCLOAK_REALM: "hypolia"
-        KEYCLOAK_CLIENT_ID: "api"
-        KEYCLOAK_CLIENT_SECRET: "A4B6h0ofQNgqoqZ0oPJRjGnCriTFdR68"
-
-
 volumes:
   keycloak_data: {}

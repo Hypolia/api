@@ -2,6 +2,7 @@ import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import { errors as authErrors } from '@adonisjs/auth'
 import { errors as lucidErrors } from '@adonisjs/lucid'
+import { errors as bouncerErrors } from '@adonisjs/bouncer'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -15,6 +16,14 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    console.log(error)
+    if (error instanceof bouncerErrors.E_AUTHORIZATION_FAILURE) {
+      return ctx.response.status(error.status).send({
+        message: error.response.message,
+        status: error.status,
+        code: error.code,
+      })
+    }
     if (error instanceof authErrors.E_UNAUTHORIZED_ACCESS) {
       ctx.response.status(401).send({
         message: error.message,

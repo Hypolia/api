@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.string('id').primary()
       table.integer('coins').notNullable()
       table.integer('level').notNullable()
-      table.string('user_id').notNullable().references('users.id').onDelete('CASCADE')
+      table.string('user_id').nullable().references('users.id').onDelete('CASCADE')
       table.string('player_uuid').notNullable().unique()
 
       table.timestamp('created_at')

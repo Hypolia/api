@@ -7,7 +7,9 @@ router
     router
       .group(() => {
         router.get('/:id', [PlayersController, 'show'])
+        router.post('/', [PlayersController, 'store'])
       })
       .prefix('/players')
   })
-  .prefix('/v1').use(middleware.auth())
+  .prefix('/v1')
+  .use(middleware.auth())

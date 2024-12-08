@@ -6,7 +6,11 @@ import { Infer } from '@vinejs/vine/types'
  * a new player.ts.
  */
 export const createPlayerValidator = vine.compile(
-  vine.object({})
+  vine.object({
+    playerUuid: vine.string().uuid(),
+    level: vine.number().optional(),
+    coins: vine.number().optional(),
+  })
 )
 
 /**
