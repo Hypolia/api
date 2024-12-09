@@ -1,4 +1,4 @@
-import { BaseCommand, args } from '@adonisjs/core/ace'
+import { args, BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -28,4 +28,3 @@ export default class MakeModuleController extends BaseCommand {
     ])
   }
 }
-
