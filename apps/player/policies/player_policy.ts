@@ -14,7 +14,6 @@ export default class PlayerPolicy extends BasePolicy {
   }
 
   async view(payload: JWTPayload, playerId?: string) {
-
     if (this.roleService.hasRole(payload, 'view-player')) {
       return AuthorizationResponse.allow()
     }
@@ -38,5 +37,13 @@ export default class PlayerPolicy extends BasePolicy {
     }
 
     return AuthorizationResponse.deny('You are not allowed to create a player')
+  }
+
+  async update(payload: JWTPayload) {
+    if (this.roleService.hasRole(payload, 'update-player')) {
+      return AuthorizationResponse.allow()
+    }
+
+    return AuthorizationResponse.deny('You are not allowed to update a player')
   }
 }
