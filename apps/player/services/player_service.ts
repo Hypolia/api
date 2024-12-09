@@ -1,5 +1,9 @@
 import Player from '#apps/player/models/player'
-import { CreatePlayerSchema, GetPlayersSchema } from '#apps/player/validators/player'
+import {
+  CreatePlayerSchema,
+  GetPlayersSchema,
+  UpdatePlayerSchema,
+} from '#apps/player/validators/player'
 
 export default class PlayerService {
   async findAll(payload: GetPlayersSchema) {
@@ -28,5 +32,11 @@ export default class PlayerService {
       coins: payload.coins ?? 0,
       level: payload.level ?? 1,
     })
+  }
+
+  async updateById(playerId: string, payload: UpdatePlayerSchema) {
+    const player = await this.findById(playerId)
+
+    return player.merge(payload).save()
   }
 }
