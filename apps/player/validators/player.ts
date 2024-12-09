@@ -17,7 +17,12 @@ export const createPlayerValidator = vine.compile(
  * Validator to validate the payload when updating
  * an existing player.ts.
  */
-export const updatePlayerValidator = vine.compile(vine.object({}))
+export const updatePlayerValidator = vine.compile(
+  vine.object({
+    level: vine.number().optional(),
+    coins: vine.number().optional(),
+  })
+)
 
 export const getPlayersValidator = vine.compile(
   vine.object({
