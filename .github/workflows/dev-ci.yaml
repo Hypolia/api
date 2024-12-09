@@ -9,6 +9,7 @@ on:
       - main
     paths-ignore:
       - '.github/**'
+      - 'kubernetes/**'
 
 permissions:
   contents: write
@@ -38,9 +39,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: hypolia_api_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: hypolia_api_test
         options: >-
           --health-cmd="pg_isready -U postgres"
           --health-interval=10s
@@ -63,7 +64,7 @@ jobs:
         run: pnpm run test
   build:
     if: ${{ !github.event.act }}
-    needs: [extract-version, test]
+    needs: [ extract-version, test ]
     uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
     with:
       registry: europe-west1-docker.pkg.dev/nathael-dev

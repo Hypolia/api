@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "chart.fullname" . }}-migrations
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: migrations
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              node ace migration:run --force
+          env:
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.appKeySecret.name }}
+                  key: app_key
+            - name: PORT
+              value: "{{ .Values.service.port }}"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: NODE_ENV
+              value: "production"
+            - name: DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: password
+            - name: DB_DATABASE
+              value: "{{ .Values.database.database }}"
+            - name: KEYCLOAK_URL
+              value: "{{ .Values.keycloak.url }}"
+            - name: KEYCLOAK_REALM
+              value: "{{ .Values.keycloak.realm }}"
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.secretName }}
+                  key: client_id
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.secretName }}
+                  key: client_secret
+      restartPolicy: OnFailure
+
