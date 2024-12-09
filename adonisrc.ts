@@ -53,6 +53,7 @@ export default defineConfig({
     () => import('#apps/user/routes'),
     () => import('#apps/player/routes'),
     () => import('#apps/authentication/routes'),
+    () => import('#apps/health/routes'),
   ],
 
   /*
