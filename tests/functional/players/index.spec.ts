@@ -11,7 +11,10 @@ test.group('Players index', () => {
     assert.equal(response.body().status, 401)
   })
 
-  test('should return 403 if the user was connected but not authorized', async ({ assert, client }) => {
+  test('should return 403 if the user was connected but not authorized', async ({
+    assert,
+    client,
+  }) => {
     const user = await UserFactory.make()
 
     const response = await client.get('/v1/players').loginAs(user, [])
