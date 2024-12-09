@@ -9,6 +9,7 @@ router
         router.get('/', [PlayersController, 'index'])
         router.get('/:id', [PlayersController, 'show'])
         router.post('/', [PlayersController, 'store'])
+        router.put('/:id', [PlayersController, 'update'])
       })
       .prefix('/players')
   })
