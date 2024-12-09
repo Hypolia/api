@@ -3,7 +3,11 @@ import { inject } from '@adonisjs/core'
 import PlayerService from '#apps/player/services/player_service'
 import logger from '@adonisjs/core/services/logger'
 import PlayerPolicy from '#apps/player/policies/player_policy'
-import { createPlayerValidator, getPlayersValidator } from '#apps/player/validators/player'
+import {
+  createPlayerValidator,
+  getPlayersValidator,
+  updatePlayerValidator,
+} from '#apps/player/validators/player'
 
 @inject()
 export default class PlayersController {
@@ -28,5 +32,12 @@ export default class PlayersController {
     const player = await this.playerService.create(data)
 
     return response.created(player)
+  }
+
+  async update({ request, bouncer, params }: HttpContext) {
+    await bouncer.with(PlayerPolicy).authorize('update')
+    const data = await request.validateUsing(updatePlayerValidator)
+
+    return this.playerService.updateById(params.id, data)
   }
 }
