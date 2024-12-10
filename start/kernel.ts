@@ -25,6 +25,7 @@ server.errorHandler(() => import('#apps/shared/exceptions/handler'))
 server.use([
   () => import('#apps/shared/middleware/container_bindings_middleware'),
   () => import('#apps/shared/middleware/force_json_response_middleware'),
+  () => import('#apps/shared/middleware/get_token_in_cookie_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
 ])
 

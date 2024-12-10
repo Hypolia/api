@@ -37,6 +37,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/bouncer/bouncer_provider'),
+    () => import('@adonisjs/transmit/transmit_provider')
   ],
 
   /*
@@ -54,6 +55,7 @@ export default defineConfig({
     () => import('#apps/player/routes'),
     () => import('#apps/authentication/routes'),
     () => import('#apps/health/routes'),
+    () => import('#apps/notification/routes')
   ],
 
   /*

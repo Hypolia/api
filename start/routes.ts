@@ -8,9 +8,11 @@
 */
 
 import router from '@adonisjs/core/services/router'
+import transmit from '@adonisjs/transmit/services/main'
 
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
+router.post('/', () => {
+  transmit.broadcast('test', { message: 'world' })
+  return { hello: 'world' }
 })
+
+transmit.registerRoutes()
