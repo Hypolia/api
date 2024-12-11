@@ -1,0 +1,68 @@
+on:
+  workflow_call:
+    secrets:
+      GCP_CREDENTIALS:
+        required: true
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
+
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  extract-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.VERSION }}
+    steps:
+      - name: Extract version
+        id: extract_version
+        run: echo "VERSION=$(echo $GITHUB_REF | sed -n 's/refs\/tags\/v//p')" >> $GITHUB_OUTPUT
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.act }}
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: hypolia_api_test
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.14.0'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run tests
+        run: pnpm run test
+  build:
+    if: ${{ !github.event.act }}
+    needs: [ extract-version, test ]
+    uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
+    with:
+      registry: europe-west1-docker.pkg.dev/nathael-dev
+      ref: main
+      repository: hypolia/api
+      tag: ${{ needs.extract-version.outputs.version }}
+      worker_pool: projects/nathael-dev/locations/europe-west1/workerPools/cicd-pool
+    secrets:
+      PAT: ${{ secrets.GITHUB_TOKEN }}
+      GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
