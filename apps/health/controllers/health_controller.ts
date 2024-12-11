@@ -9,8 +9,14 @@ export default class HealthController {
     return response.ok({ status: 'alive' })
   }
 
-  async ready({}: HttpContext) {
-    return healthChecks.run()
+  async ready({ response }: HttpContext) {
+    const report = await healthChecks.run()
+
+    if (report.isHealthy) {
+      return response.ok(report)
+    }
+
+    return response.serviceUnavailable(report)
   }
 
   async startup({ response }: HttpContext) {
