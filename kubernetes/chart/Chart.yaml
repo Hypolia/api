@@ -1,6 +1,6 @@
 apiVersion: v2
-name: chart
-description: A Helm chart for Kubernetes
+name: api
+description: Chart helm for Hypolia API
 
 # A chart can be either an 'application' or a 'library' chart.
 #
