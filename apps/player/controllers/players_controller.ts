@@ -13,6 +13,13 @@ import {
 export default class PlayersController {
   constructor(private playerService: PlayerService) {}
 
+  /**
+   * @index
+   * @responseBody 200 - <Player[]>
+   * @responseHeader 200 - @use(paginated)
+   * @param request
+   * @param bouncer
+   */
   async index({ request, bouncer }: HttpContext) {
     await bouncer.with(PlayerPolicy).authorize('view')
     const data = await request.validateUsing(getPlayersValidator)

@@ -9,10 +9,15 @@
 
 import router from '@adonisjs/core/services/router'
 import transmit from '@adonisjs/transmit/services/main'
+import AutoSwagger from 'adonis-autoswagger'
+import swagger from '#config/swagger'
 
-router.post('/', () => {
-  transmit.broadcast('test', { message: 'world' })
-  return { hello: 'world' }
+router.get('api-docs/openapi.json', async () => {
+  return AutoSwagger.default.json(router.toJSON(), swagger)
+})
+
+router.get('/swagger', async () => {
+  return AutoSwagger.default.docs(router.toJSON(), swagger)
 })
 
 transmit.registerRoutes()

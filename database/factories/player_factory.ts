@@ -1,5 +1,5 @@
 import factory from '@adonisjs/lucid/factories'
-import Player from '#apps/player/models/player'
+import Player from '#models/player'
 import { UserFactory } from '#database/factories/user_factory'
 
 export const PlayerFactory = factory

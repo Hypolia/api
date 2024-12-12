@@ -1,4 +1,4 @@
-import Player from '#apps/player/models/player'
+import Player from '#models/player'
 import {
   CreatePlayerSchema,
   GetPlayersSchema,

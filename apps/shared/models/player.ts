@@ -1,6 +1,6 @@
 import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
-import User from '#apps/user/models/user'
+import User from '#models/user'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { generateSnowflake } from '#apps/shared/services/snowflake_service'
 

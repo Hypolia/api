@@ -1,4 +1,4 @@
-import User from '#apps/user/models/user'
+import User from '#models/user'
 
 export default class UserService {
   async findById(id: string) {

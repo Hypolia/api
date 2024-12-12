@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node bin/server.js",
     "build": "node ace build",
-    "dev": "node ace serve --hmr",
+    "dev": "node ace serve --watch",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -17,7 +17,6 @@
     "#apps/*": "./apps/*.js",
     "#controllers/*": "./apps/*.js",
     "#exceptions/*": "./app/exceptions/*.js",
-    "#models/*": "./apps/shared/models/*.js",
     "#mails/*": "./app/mails/*.js",
     "#services/*": "./app/services/*.js",
     "#listeners/*": "./app/listeners/*.js",
@@ -31,7 +30,8 @@
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
     "#config/*": "./config/*.js",
-    "#interfaces/*": "./apps/*.js"
+    "#interfaces/*": "./apps/*.js",
+    "#models/*": "./apps/shared/models/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
@@ -62,6 +62,7 @@
     "@japa/expect": "^3.0.2",
     "@types/jsonwebtoken": "^9.0.6",
     "@vinejs/vine": "^2.1.0",
+    "adonis-autoswagger": "^3.64.0",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
