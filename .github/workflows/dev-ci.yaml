@@ -71,6 +71,7 @@ jobs:
       ref: main
       repository: hypolia/api
       tag: ${{ needs.extract-version.outputs.version }}
+      registry_username: ${{ github.actor }}
     secrets:
       PAT: ${{ secrets.GITHUB_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
