@@ -65,13 +65,12 @@ jobs:
   build:
     if: ${{ !github.event.act }}
     needs: [ extract-version, test ]
-    uses: hypolia/infrastructure/.github/workflows/gcp-cloud-build.yaml@main
+    uses: hypolia/infrastructure/.github/workflows/build-and-push.yaml@main
     with:
-      registry: europe-west1-docker.pkg.dev/nathael-dev
+      registry: ghcr.io
       ref: main
       repository: hypolia/api
       tag: ${{ needs.extract-version.outputs.version }}
-      worker_pool: projects/nathael-dev/locations/europe-west1/workerPools/cicd-pool
     secrets:
       PAT: ${{ secrets.GITHUB_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
