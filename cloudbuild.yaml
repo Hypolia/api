@@ -1,0 +1,18 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/hypolia/api:$SHORT_SHA', '.' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/hypolia/api:$SHORT_SHA' ]
+
+#  - name: 'gcr.io/cloud-builders/gcloud'
+#    args: [
+#      'run', 'deploy', 'api',
+#      '--image', 'europe-west1-docker.pkg.dev/$PROJECT_ID/hypolia/api:$SHORT_SHA',
+#      '--region', 'europe-west1',
+#      '--platform', 'managed',
+#      '--allow-unauthenticated'
+#    ]
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/hypolia/api:$SHORT_SHA'
