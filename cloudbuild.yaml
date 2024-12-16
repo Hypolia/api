@@ -16,3 +16,6 @@ steps:
 
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/hypolia/api:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
